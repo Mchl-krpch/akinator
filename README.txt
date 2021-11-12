@@ -28,7 +28,7 @@ The release of all the textures for the game was done in the figma program - a s
    Getting over it:    [https://www.youtube.com/watch?v=hPehax6V0HU&ab_channel=Blastboltthebolt]
    Sexy hiking:        [https://www.youtube.com/watch?v=-zUChPWAfyA&ab_channel=Deffar]
 
-If you liked the game, you can also let me know about it in issue [ I want an issue, write an issue) ].
+   If you liked the game, you can also let me know about it in issue [ I want an issue, write an issue) ].
 
 
                                                   Have a nice day!
