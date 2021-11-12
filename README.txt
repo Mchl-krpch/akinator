@@ -26,7 +26,8 @@ A simple clone game of the famous game akinator on the Internet [https://ru.akin
    lore of the classic game "Prince of Persia" published in 1984: you need to save the princess from the
    clutches of a greedy evil shah, who encroached on your beauty!
 
-   Speedruns for games:
+   GAME SPEEDRUNS:
+   
    Getting over it:       https://www.youtube.com/watch?v=hPehax6V0HU&ab_channel=Blastboltthebolt
    Sexy hiking:           https://www.youtube.com/watch?v=-zUChPWAfyA&ab_channel=Deffar
 
