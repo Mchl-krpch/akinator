@@ -27,8 +27,8 @@ A simple clone game of the famous game akinator on the Internet [https://ru.akin
    clutches of a greedy evil shah, who encroached on your beauty!
 
    Speedruns for games:
-   Getting over it:    [https://www.youtube.com/watch?v=hPehax6V0HU&ab_channel=Blastboltthebolt]
-   Sexy hiking:        [https://www.youtube.com/watch?v=-zUChPWAfyA&ab_channel=Deffar]
+   Getting over it:       [https://www.youtube.com/watch?v=hPehax6V0HU&ab_channel=Blastboltthebolt]
+   Sexy hiking:                     [https://www.youtube.com/watch?v=-zUChPWAfyA&ab_channel=Deffar]
 
 
    If you liked the game, you can also let me know about it in issue [ I want an issue, write an issue) ].
