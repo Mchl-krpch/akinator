@@ -11,7 +11,7 @@ a simple clone game of the famous game akinator on the Internet [https://ru.akin
 
 THE PROGRAM SHOULD SOLVE THE FOLLOWING PROBLEMS:
 - Be able to guess the envisioned character. This is implemented with a response tree. Akinator creates a tree that helps him
-get closer to the answer on each player's question.
+  get closer to the answer on each player's question.
    
 - Save player progress to hard drive. The player's progress is saved if he suddenly needs to leave the game and, for example,
   quickly worry about mathematical analysis for a semester test.
