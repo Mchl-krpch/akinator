@@ -21,7 +21,8 @@ A simple clone game of the famous game akinator on the Internet [https://ru.akin
    game "getting over it" or otherwise known as the man in the cauldron.
    
    
-   The release of all the textures for the game was done in the figma program - a simple interface editor that helped me make pictures for simple animations and splash screens.
+   The release of all the textures for the game was done in the figma program - a simple interface editor that helped me make
+   pictures for simple animations and splash screens.
 
    Speedruns for games:
    Getting over it:    [https://www.youtube.com/watch?v=hPehax6V0HU&ab_channel=Blastboltthebolt]
