@@ -1,3 +1,5 @@
+ - THOUGHTS
+
  - I want to try to arrange the functions in the program in the
    order that they appear as they are executed in the program, it
    isimpossible to make an exact sequence of commands (due to cycles
