@@ -19,7 +19,7 @@ a simple clone game of the famous game akinator on the Internet [https://ru.akin
    
  - The program is similar to Akinator origin. She has her own game character and voiceover. character taken from the game
    "Sexy hiking" [https://gamin.me/games/sexy-hiking] - Great game-progenitor of the well-known game "getting over it" or
-   otherwise known as the man in the cauldron [https://www.youtube.com/watch?v=wnzTObVRwF0&ab_channel=Stillow].
+   otherwise known as the man in the cauldron.
 
 Speedruns for games:
 Getting over it:    [https://www.youtube.com/watch?v=hPehax6V0HU&ab_channel=Blastboltthebolt]
