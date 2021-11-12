@@ -8,7 +8,6 @@ A simple clone game of the famous game akinator on the Internet [https://ru.akin
 
 
 
-
    THE PROGRAM SHOULD SOLVE THE FOLLOWING PROBLEMS:
   
  - Be able to guess the envisioned character. This is implemented with a response tree. Akinator creates a
@@ -21,12 +20,13 @@ A simple clone game of the famous game akinator on the Internet [https://ru.akin
    from the game "Sexy hiking" [https://gamin.me/games/sexy-hiking] - Great game-progenitor of the well-known
    game "getting over it" or otherwise known as the man in the cauldron.
    
+   
 The release of all the textures for the game was done in the figma program - a simple interface editor that helped me make pictures for simple animations and splash screens.
 
 
-Speedruns for games:
-Getting over it:    [https://www.youtube.com/watch?v=hPehax6V0HU&ab_channel=Blastboltthebolt]
-Sexy hiking:        [https://www.youtube.com/watch?v=-zUChPWAfyA&ab_channel=Deffar]
+   Speedruns for games:
+   Getting over it:    [https://www.youtube.com/watch?v=hPehax6V0HU&ab_channel=Blastboltthebolt]
+   Sexy hiking:        [https://www.youtube.com/watch?v=-zUChPWAfyA&ab_channel=Deffar]
 
 If you liked the game, you can also let me know about it in issue [ I want an issue, write an issue) ].
 
