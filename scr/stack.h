@@ -11,7 +11,7 @@
 /**
  * @brief Special stack's type which used in stack
  */
-typedef int stack_t;
+typedef struct Node* stack_t;
 
 enum class StackError: char {
   noErr = 0,

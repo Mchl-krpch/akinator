@@ -84,7 +84,7 @@ StackError stackResize (Stack *stack, size_t increase_by)
       return StackError::badSz;
     }
 
-    stack->capacity = increase_by;
+    stack->capacity = (int)increase_by;
     stack_t *temporary_data = (stack_t *) realloc(stack->data, increase_by * sizeof(stack_t));
 
     if (stack->data == nullptr) {

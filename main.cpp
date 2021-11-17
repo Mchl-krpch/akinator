@@ -9,6 +9,7 @@
 
 int main ()
 {
+	// printf ("hello");
 	Tree tree = {};
 	select_mode (&tree);
 	
