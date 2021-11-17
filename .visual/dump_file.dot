@@ -1,0 +1,19 @@
+digraph G {
+	L0[shape="record", label=" <lp1> 1 | { 0  0 | devochka?} | <lp2> 2"];
+	L4[shape="record", label=" <lp5> 5 | { 4  0 | seichas_algem?} | <lp6> 6"];
+	L6[shape="record", label=" { 6  1 | ded}"];
+	L5[shape="record", label=" { 5  1 | Bogdanov}"];
+	L1[shape="record", label=" <lp2> 2 | { 1  0 | not_mipt?} | <lp3> 3"];
+	L3[shape="record", label=" <lp4> 4 | { 3  0 | kurator?} | <lp5> 5"];
+	L8[shape="record", label=" { 8  1 | arina}"];
+	L7[shape="record", label=" { 7  1 | Svetlana}"];
+	L2[shape="record", label=" { 2  1 | Lera}"];
+	L0:<lp1> -> L1[color="blue"];
+	L1:<lp2> -> L2[color="blue"];
+	L1:<lp3> -> L3[color="blue"];
+	L3:<lp4> -> L7[color="blue"];
+	L3:<lp5> -> L8[color="blue"];
+	L0:<lp2> -> L4[color="blue"];
+	L4:<lp5> -> L5[color="blue"];
+	L4:<lp6> -> L6[color="blue"];
+}
