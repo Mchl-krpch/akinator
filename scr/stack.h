@@ -4,8 +4,6 @@
 #include <cmath>
 #include <cstdint>
 
-// #include "aki.h"
-
 #define REALLOC_COEFF 2
 
 /**

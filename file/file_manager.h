@@ -1,7 +1,7 @@
 /**
- * Additional file handling library. Originally written for the Akinator
- * project, the 6th project within the course of I.R.Dedinsky, so that
- * Akinator could work with files of its type.
+ * Additional file handling library. Originally written for the
+ * Akinator project, the 6th project within the course of
+ * I.R.Dedinsky, so that Akinator could work with files of its type.
  */
 
 /**
@@ -13,6 +13,7 @@
 #define FILE_MANAGER_H
 
 #include "../scr/aki.h"
+//--------------------------------------------------------------------
 
 /**
  * @brief special define to know max-index in word,
@@ -25,7 +26,8 @@
 /**
  * @brief Looks at which folder in the program is currently active
  * 
- * @param *dir_name this array will be filled as name of current directory
+ * @param *dir_name this array will be filled as name of
+ * current directory
  */
 void get_cur_dir (char *dir_name);
 
@@ -38,7 +40,8 @@ void get_cur_dir (char *dir_name);
  * 
  * @return Number of splited symbols.
  */
-size_t split_last_word (char *dir_path, char *dir_name, char split_char, int max_index);
+size_t split_last_word (char *dir_path, char *dir_name,
+                        char split_char, int max_index);
 
 /**
  * @brief After separating a word, it must be written in the reverse
@@ -65,6 +68,8 @@ bool check_ext (char *name, const char *ext);
  * @param file_ext Extencion which we need to find
  * @param lvls Special struct to contain names of files
  */
-size_t find_all_ext_coincidences (const char *file_ext, NamesLvl *lvls);
+size_t find_all_ext_coincidences (const char *file_ext,
+                                  NamesLvl *lvls);
 
+//--------------------------------------------------------------------
 #endif//FILE_MANAGER_H

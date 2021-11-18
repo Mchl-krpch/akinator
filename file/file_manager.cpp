@@ -4,12 +4,11 @@
 #include <assert.h>
 #include <sys/types.h>
 #include <io.h>
-
 #include <stdlib.h>
 
 #include "file_manager.h"
+//--------------------------------------------------------------------
 
-// [ #### DIRECTORY NAME ############################################## ] 
 void get_cur_dir (char *dir_name)
 {
 	char dir_path[MAX_DIR_PATH] = {};
@@ -18,9 +17,10 @@ void get_cur_dir (char *dir_name)
 	split_last_word (dir_path, dir_name, '\\', 5);
 }
 
-//-----------------------------------------------------------------------
+//--------------------------------------------------------------------
 
-size_t split_last_word (char *path, char *dir, char split_char, int max_index)
+size_t split_last_word (char *path, char *dir,
+												char split_char, int max_index)
 {
 	assert (dir != nullptr);
 	assert (path != nullptr);
@@ -48,7 +48,7 @@ size_t split_last_word (char *path, char *dir, char split_char, int max_index)
 	return sym_counter;
 }
 
-//-----------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 void rev_last_word (char *dir_name, size_t len)
 {
@@ -60,7 +60,8 @@ void rev_last_word (char *dir_name, size_t len)
 	}
 }
 
-// [ #### READ EXTENCION ############################################### ] 
+//--------------------------------------------------------------------
+
 size_t find_all_ext_coincidences (const char *ext, NamesLvl *lvls)
 {
 	assert (ext != nullptr);
@@ -82,10 +83,13 @@ size_t find_all_ext_coincidences (const char *ext, NamesLvl *lvls)
     	break;
     }
 
-  	if (strchr (de->d_name, '.') != NULL && check_ext (de->d_name, ext)){
+  	if (strchr (de->d_name, '.') != NULL &&
+  		  check_ext (de->d_name, ext)){
+
   		lvls->size++;
 
-  		lvls->names[find_counter].ptr = (char *)calloc (32, sizeof (char));
+  		lvls->names[find_counter].ptr =
+  										(char *)calloc (32, sizeof (char));
 
   		strcpy (lvls->names[find_counter].ptr, de->d_name);
   		printf ("n find: %s\n", lvls->names[find_counter].ptr);
@@ -99,7 +103,7 @@ size_t find_all_ext_coincidences (const char *ext, NamesLvl *lvls)
   return find_counter;
 }
 
-//-----------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 bool check_ext (char *name, const char *ext)
 {
@@ -117,3 +121,4 @@ bool check_ext (char *name, const char *ext)
 
 	return false;
 }
+//--------------------------------------------------------------------

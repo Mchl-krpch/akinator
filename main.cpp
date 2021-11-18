@@ -4,7 +4,6 @@
 #include "scr/aki.h"
 #include "scr/stack.h"
 
-
 int main ()
 {
 	Tree tree = {};

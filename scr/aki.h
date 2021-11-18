@@ -13,13 +13,15 @@
  * in the future, we will probably create a window in which a
  * dialogue with this akinator will be implemented
  */
+
+//--------------------------------------------------------------------
 #ifndef AKI_H
 #define AKI_H
 
 #include <stdio.h>
 
 #include "stack.h"
-
+//--------------------------------------------------------------------
 #define MAX_DATA_LEN 100
 #define MAX_WORD_LEN  32
 
@@ -31,12 +33,15 @@
   fprintf (file, "%s\n", data); \
   fprintf (file, "}\n");
 
+//--------------------------------------------------------------------
+
 const char DUMP_FILE[]     = ".visual/dump_file.dot";
 const char STD_DATA_FILE[] = "data.txt";
 const char STD_LVL_DIR[]   = ".lvls/";
 const char AKI_EXT[]       = "tree";
 const char VIZ_FILE[]      = ".visual/graph.png";
 
+//--------------------------------------------------------------------
 /**
  * @brief Stucture to contain name of file for program
  */
@@ -104,6 +109,15 @@ struct Tree {
 	Node *cur_node             = nullptr;
 };
 
+
+//-------- Modes -----------------------------------------------------
+/**
+ * @brief Selects mode of Aki-program
+ * 
+ * @param tree ptr to Akinator's tree
+ */
+void select_mode (Tree* tree);
+
 /**
  * @brief User can chose data_base to use it in Akinator
  * 
@@ -113,13 +127,62 @@ struct Tree {
 void chose_data_file (Tree *tree, NamesLvl *lvls);
 
 /**
- * @brief Creates new tree in mode New tree
+ * @brief Play description (search mode)
+ * 
+ * @param levels Ptr to NamesLvl data [names of levels]
+ * @param tree   Ptr to tree
+ */
+void description_mode (NamesLvl *levels, Tree *tree);
+
+/**
+ * @brief Play description (search mode)
+ * 
+ * @param levels Ptr to NamesLvl data [names of levels]
+ * @param tree   Ptr to tree
+ */
+void compare_mode (Tree *tree, NamesLvl *levels);
+
+
+//-------- Axilary to modes ------------------------------------------
+/**
+ * @brief Creates new tree in mode New tree   [for new tree mode]
  */
 void create_new_tree ();
 
 /**
+ * @brief Push all parents node in stack      [for compare mode]
+ */
+void push_nodes_in_stack (Node *node, Stack *stack);
+
+/**
+ * @brief Skip own nodes in tree              [for compare mode]
+ */
+void skip_own_nodes (Node *print_node11, Node *print_node21,
+                     Stack *stack1, Stack *stack2);
+
+/**
+ * @brief Skip own nodes in tree              [for compare mode]
+ */
+void skip_own_nodes (Node **print_node11, Node **print_node21,
+                     Stack *stack1, Stack *stack2);
+
+/**
+ * @brief Print own nodes in tree             [for compare mode]
+ */
+void print_own_nodes (Stack *stack1, Stack *stack2,
+                      Node *print_node11, Node *print_node12,
+                      Node *print_node21, Node *print_node22);
+
+/**
+ * @brief Print remaining nodes               [for compare mode]
+ */
+void print_last_nodes (Stack *stack,
+                       Node *node1, Node *node2,
+                       int index);
+
+/**
  * @brief Find all levels with special extencion in
- * derectory
+ * derectory                                  [for P, C, D mode]
  * 
  * @param Levels Ptr to NamesLvl strycture
  * @param dir name of directory
@@ -129,7 +192,14 @@ void create_new_tree ();
 size_t find_lvls (const char *dir, NamesLvl *Levels);
 
 /**
- * @brief Adds node to tree
+ * @brief Save file with akinator's data     [for compare mode]
+ */
+void save_new_aki_data_file (Tree *tree);
+
+//-------- Main functions --------------------------------------------
+
+/**
+ * @brief Adds node to tree                   [for P, N, mode]
  * 
  * @param tree ptr to Akinator's tree
  * @param size [l,r - value] add node in
@@ -138,11 +208,11 @@ size_t find_lvls (const char *dir, NamesLvl *Levels);
 void expand_tree (Tree *tree, char side);
 
 /**
- * @brief Selects mode of Aki-program
+ * @brief Change current node data in tree
  * 
- * @param tree ptr to Akinator's tree
+ * @param tree        Ptr to Akinator's tree node
  */
-void select_mode (Tree* tree);
+void change_node_data (Node *node);
 
 /**
  * @brief Creates New node
@@ -168,13 +238,6 @@ void tree_ctor (Tree *tree, NamesLvl *lvls);
 void get_data (Tree *tree, FILE *file);
 
 /**
- * @brief Create akinator's graph
- * 
- * @param tree Ptr to Akinator's tree
- */
-void create_graph (Tree *tree, int active_node);
-
-/**
  * @brief Gets player's answer to Akinator's
  * question
  */
@@ -188,6 +251,31 @@ bool get_ans ();
 void load_game (Tree *tree, Stack *stack);
 
 /**
+ * @brief Ask user's all question in game
+ * 
+ * @param tree Ptr to Akinator's tree
+ * @param answer_with_assumption_correct Special const to know
+ * is answer with IDN answer was right
+ * @param stack Ptr to stack with IDN nodes
+ */
+void answer_aki_question (Tree *tree, Stack *stack,
+                          bool *answer_with_assumption_correct);
+
+/**
+ * @brief Bad endin of the game
+ * 
+ * @param tree Ptr to Akinator's tree
+ */
+void BAD_END (Tree *tree);
+
+/**
+ * @brief Happy endin of the game
+ * 
+ * @param tree Ptr to Akinator's tree
+ */
+void happy_end (Tree *tree);
+
+/**
  * @brief Save recursively player's and akinators game progress
  * 
  * @param tree     Ptr to akinator's tree
@@ -195,6 +283,15 @@ void load_game (Tree *tree, Stack *stack);
  * @param data_tx  Ptr to file that contains akinator's tree data
  */
 void print_node (Node *node, FILE *file);
+
+//-------- Graph funcs -----------------------------------------------
+
+/**
+ * @brief Create akinator's graph
+ * 
+ * @param tree Ptr to Akinator's tree
+ */
+void create_graph (Tree *tree, int active_node);
 
 /**
  * @brief Recoursively write one node of akinator's tree
@@ -213,6 +310,15 @@ void write_tree (Node *node, FILE *graph_file, int is_active);
  * @param index      Node index to know how to connect nodes in graph
  */
 void connect_tree (Node *node, FILE *graph_file);
+
+/**
+ * @brief Make current node the last one [New tree mode function]
+ * 
+ * @param tree        Ptr to Akinator's tree node
+ */
+void tide_node (Node *node);
+
+//-------- Compare, search -------------------------------------------
 
 /**
  * @brief search node in tree which contains needed data
@@ -237,20 +343,6 @@ void create_path (Node *node, Stack *stack);
  * @param node  Contains ptr to node
  */
 void print_path (Stack *stack, Node *searched_node);
-
-/**
- * @brief Make current node the last one [New tree mode function]
- * 
- * @param tree        Ptr to Akinator's tree node
- */
-void tide_node (Node *node);
-
-/**
- * @brief Change current node data in tree
- * 
- * @param tree        Ptr to Akinator's tree node
- */
-void change_node_data (Node *node);
 
 /**
  * @brief Compare two objects, create which way is the node
@@ -294,5 +386,7 @@ void expand_left (Tree *tree, char *new_object, char *old_object, char *new_data
  * @param new_data    Ptr to new qestion that will be inserted in tree
  */
 void expand_right (Tree *tree, char *new_object, char *old_object, char *new_data);
+
+//-------- End of .h file! -------------------------------------------
 
 #endif//AKI_H
