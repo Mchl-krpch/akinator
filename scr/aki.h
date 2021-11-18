@@ -31,11 +31,11 @@
   fprintf (file, "%s\n", data); \
   fprintf (file, "}\n");
 
+const char DUMP_FILE[]     = ".visual/dump_file.dot";
 const char STD_DATA_FILE[] = "data.txt";
 const char STD_LVL_DIR[]   = ".lvls/";
-const char DUMP_FILE[]     = ".visual/dump_file.dot";
-const char VIZ_FILE[]      = ".visual/graph.png";
 const char AKI_EXT[]       = "tree";
+const char VIZ_FILE[]      = ".visual/graph.png";
 
 /**
  * @brief Stucture to contain name of file for program
@@ -82,6 +82,7 @@ struct Node {
   int node_index           = 0;
 
   bool is_endian           = 0;
+  bool is_active           = 0;
 };
 
 /**
@@ -103,8 +104,17 @@ struct Tree {
 	Node *cur_node             = nullptr;
 };
 
+/**
+ * @brief User can chose data_base to use it in Akinator
+ * 
+ * @param tree Ptr to empty created tree
+ * @param lvls Ptr to created lvls data
+ */
 void chose_data_file (Tree *tree, NamesLvl *lvls);
 
+/**
+ * @brief Creates new tree in mode New tree
+ */
 void create_new_tree ();
 
 /**
@@ -118,6 +128,13 @@ void create_new_tree ();
  */
 size_t find_lvls (const char *dir, NamesLvl *Levels);
 
+/**
+ * @brief Adds node to tree
+ * 
+ * @param tree ptr to Akinator's tree
+ * @param size [l,r - value] add node in
+ * yes/no-direction
+ */
 void expand_tree (Tree *tree, char side);
 
 /**
@@ -168,14 +185,7 @@ bool get_ans ();
  * 
  * @param tree Ptr to Akinator's tree
  */
-void load_game (Tree *tree);
-
-/**
- * @brief Add new node in tree
- * 
- * @param tree ptr to current tree
- */
-void add_node (Tree *tree);
+void load_game (Tree *tree, Stack *stack);
 
 /**
  * @brief Save recursively player's and akinators game progress
@@ -226,7 +236,21 @@ void create_path (Node *node, Stack *stack);
  * @param stack Ptr to stack with data
  * @param node  Contains ptr to node
  */
-void print_path (Stack *stack, Node *node);
+void print_path (Stack *stack, Node *searched_node);
+
+/**
+ * @brief Make current node the last one [New tree mode function]
+ * 
+ * @param tree        Ptr to Akinator's tree node
+ */
+void tide_node (Node *node);
+
+/**
+ * @brief Change current node data in tree
+ * 
+ * @param tree        Ptr to Akinator's tree node
+ */
+void change_node_data (Node *node);
 
 /**
  * @brief Compare two objects, create which way is the node
@@ -242,6 +266,33 @@ void compare_objects (Tree *tree, Stack *stack, Stack *stack2);
  * @param tree        Ptr to Akinator's tree
  * @param saving_node contains ptr to needed node
  */
-void print_difference (int *ptr1, int *ptr2, char *find1, Node *node1, char *find2, Node *node2);
+void print_difference (Stack *stack, Node *node1, Stack *stack2, Node *node2);
+
+/**
+ * @brief Creates first node in new tree [create new tree mode]
+ * 
+ * @param tree        Ptr to Akinator's tree
+ */
+void first_node_in_new_tree (Tree *tree);
+
+/**
+ * @brief Expand node to left side in new tree
+ * 
+ * @param tree        Ptr to Akinator's tree
+ * @param new_object  Ptr to new object buffer
+ * @param old_object  Ptr to old object that was in tree
+ * @param new_data    Ptr to new qestion that will be inserted in tree
+ */
+void expand_left (Tree *tree, char *new_object, char *old_object, char *new_data);
+
+/**
+ * @brief Expand node to right side in new tree
+ * 
+ * @param tree        Ptr to Akinator's tree
+ * @param new_object  Ptr to new object buffer
+ * @param old_object  Ptr to old object that was in tree
+ * @param new_data    Ptr to new qestion that will be inserted in tree
+ */
+void expand_right (Tree *tree, char *new_object, char *old_object, char *new_data);
 
 #endif//AKI_H

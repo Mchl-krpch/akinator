@@ -11,17 +11,12 @@
 #include "stack.h"
 #include "aki.h"
 
-//------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 
-void select_mode (Tree* tree)
+static void introduction ()
 {
-	assert (tree != nullptr);
+	txSpeak ("vas privetstvuit inostranni pragramma Akinator! Smotrite!");
 
-	NamesLvl levels = {};
-	find_lvls (STD_LVL_DIR, &levels);
-	// printf ("hello");
-
-	txSpeak ("\vvas privetstvuit inostranni pragramma Akinator! smotrite chto ya mogu!");
 	printf ("(Chose mode)\n\n");
 	printf ("_____[ Akinator program ]______________\n");
 	printf ("[P] Play game\n");
@@ -32,50 +27,347 @@ void select_mode (Tree* tree)
 	printf ("[Q] Quit\n");
 	printf ("---------------------------------------\n");
 
+	txSpeak ("Akinator mozet otgadat to chto ti dumal, risovat graf, sravnit, sozdat derevo, nahodit cho-to");
+	txSpeak ("esli Akinator vas uze dostal wi mozete vibrat Kwit");
+
+	return;
+}
+
+//--------------------------------------------------------------------
+
+static void description_mode (NamesLvl *levels, Tree *tree)
+{
+	tree_ctor (tree, levels);
+
+	create_graph (tree, 0);
+	char search_data[MAX_DATA_LEN] = {};
+
+	printf ("we find: ");
+
+	fflush(stdin);
+	fgets (search_data, MAX_DATA_LEN, stdin);
+	search_data[strlen (search_data) - 1] = '\0';
+
+	Stack stack = {};
+	stackCtor (&stack, 16);
+
+	Node *search_node = nullptr;
+	search_object (tree->cur_node, search_data, &stack, &search_node);
+	create_graph (tree, 0);
+	printf ("\n____[ Desctiption ]___________\n");
+	print_path (&stack, search_node);
+	/*
+	while (search_node->parent != nullptr) {
+		stackPush (&stack, search_node->parent);
+
+		search_node = search_node->parent;
+		printf ("size: %d\n", stack.size);
+	}
+
+	Node *print_node  = nullptr;
+	Node *print_node2 = nullptr;
+	stackTop (&stack, &print_node);
+	stackPop (&stack);
+	while (stack.size > 0) {
+		stackTop (&stack, &print_node2);
+		if ( strcmp (print_node->right->data, print_node2->data) == 0) {
+			printf ("Ne %s ", print_node->data);
+		}
+		else {
+			printf ("%s ", print_node->data);
+		}
+
+		print_node = print_node2;
+
+		stackPop (&stack);
+	}
+	*/
+
+	stackDtor (&stack);
+	return;
+}
+
+
+//--------------------------------------------------------------------
+
+void search_object (Node *node, char *data, Stack *stack, Node **saving_node)
+{
+	assert (saving_node != nullptr);
+	assert (node        != nullptr);
+	assert (data 			  != nullptr);
+	assert (stack       != nullptr);
+
+	if (node->left->is_endian != 1) {
+		// stackPush (stack, node->left);
+		search_object (node->left, data, stack, saving_node);
+	}
+	else {
+		if (strcmp (node->left->data, data) == 0) {
+			node->left->is_active = 1;
+
+			// printf ("WE FIND: %s\n", node->left->data);
+			stackPush (stack, node->left);
+
+			*saving_node = node->left;
+			return;
+		}
+	}
+
+	if (node->right->is_endian != 1) {
+		search_object (node->right, data, stack, saving_node);
+	}
+	else {
+		if (strcmp (node->right->data, data) == 0) {
+			node->right->is_active = 1;
+
+			stackPush (stack, node->right);
+			// printf ("WE FIND: %s\n", node->right->data);
+
+			*saving_node = node->right;
+			return;
+		}
+	}
+
+	// stackPush (stack, node);
+
+	return;
+}
+
+//--------------------------------------------------------------------
+
+void print_path (Stack *stack, Node *search_node)
+{
+	if (search_node == nullptr) {
+		printf ("We haven't this end-node in tree!\n");
+
+		return;
+	}
+
+	while (search_node->parent != nullptr) {
+		stackPush (stack, search_node->parent);
+
+		search_node = search_node->parent;
+		// printf ("size: %d\n", stack->size);
+	}
+
+	Node *print_node  = nullptr;
+	Node *print_node2 = nullptr;
+	stackTop (stack, &print_node);
+	stackPop (stack);
+	while (stack->size > 0) {
+		stackTop (stack, &print_node2);
+		if ( strcmp (print_node->right->data, print_node2->data) == 0) {
+			printf ("Ne %s ", print_node->data);
+		}
+		else {
+			printf ("%s ", print_node->data);
+		}
+
+		print_node = print_node2;
+
+		stackPop (stack);
+	}
+}
+
+//--------------------------------------------------------------------
+
+static void compare_mode (Tree *tree, NamesLvl *levels)
+{
+	tree_ctor (tree, levels);
+
+	char search_data[MAX_DATA_LEN] = {};
+	// printf ("we find 1st object: ");
+
+	fflush (stdin);
+	fgets (search_data, MAX_DATA_LEN, stdin);
+	search_data[strlen (search_data) - 1] = '\0';
+
+	Stack stack = {};
+	stackCtor (&stack, 16);
+	Node *search_node = nullptr;
+	search_object (tree->cur_node, search_data, &stack, &search_node);
+	// print_path (search_node);
+
+	// printf ("we find 2nd object: ");
+
+	Stack stack2 = {};
+	stackCtor (&stack2, 16);
+
+	Node *search_node2 = nullptr;
+	fflush(stdin);
+	fgets (search_data, MAX_DATA_LEN, stdin);
+	search_data[strlen (search_data) - 1] = '\0';
+	search_object (tree->cur_node, search_data, &stack2, &search_node2);
+	// print_path (search_node2);
+
+	create_graph (tree, 0);
+
+	print_difference (&stack, search_node, &stack2, search_node2);
+
+	return; 
+}
+
+//--------------------------------------------------------------------
+
+void print_difference (Stack *stack1, Node *search_node1, Stack *stack2, Node *search_node2)
+{
+	while (search_node1->parent != nullptr) {
+		stackPush (stack1, search_node1->parent);
+
+		search_node1 = search_node1->parent;
+	}
+
+	while (search_node2->parent != nullptr) {
+		stackPush (stack2, search_node2->parent);
+
+		search_node2 = search_node2->parent;
+	}
+
+	Node *print_node11 = nullptr;
+	Node *print_node12 = nullptr;
+
+	Node *print_node21 = nullptr;
+	Node *print_node22 = nullptr;
+
+	stackTop (stack1, &print_node11);
+	stackPop (stack1);
+	stackTop (stack2, &print_node21);
+	stackPop (stack2);
+
+	while (strcmp (print_node11->data, print_node21->data) == 0) {
+		stackTop (stack1, &print_node11);
+		stackPop (stack1);
+		stackTop (stack2, &print_node21);
+		stackPop (stack2);
+	}
+
+	printf ("dif. start at node with data: %s\n", print_node11->parent->data);
+	printf ("\n____[difference]__________________________\n");
+
+	while (stack1->size > 0 && stack2->size > 0) {
+		stackTop (stack1, &print_node12);
+		if (strcmp (print_node11->right->data, print_node12->data) == 0) {
+			printf ("1] ne %10s ", print_node11->data);
+		}
+		else {
+			printf ("1] %10s", print_node11->data);
+		}
+
+		print_node11 = print_node12;
+
+		stackTop (stack2, &print_node22);
+		if (strcmp (print_node21->right->data, print_node22->data) == 0) {
+			printf ("2] ne %10s\n", print_node21->data);
+		}
+		else {
+			printf ("2] %10s\n", print_node21->data);
+		}
+
+		print_node21 = print_node22;
+
+		stackPop (stack1);
+		stackPop (stack2);
+	}
+
+	while (stack1->size > 0) {
+		stackTop (stack1, &print_node12);
+		if ( strcmp (print_node11->right->data, print_node12->data) == 0) {
+			printf ("1] ne %10s\n", print_node11->data);
+		}
+		else {
+			printf ("1]    %10s\n", print_node11->data);
+		}
+
+		print_node11 = print_node12;
+
+		stackPop (stack1);
+	}
+
+	while (stack2->size > 0) {
+		stackTop (stack2, &print_node22);
+		if ( strcmp (print_node21->right->data, print_node22->data) == 0) {
+			printf ("\t\t 2] ne %10s\n", print_node21->data);
+		}
+		else {
+			printf ("\t\t 2]    %10s\n", print_node21->data);
+		}
+
+		print_node21 = print_node22;
+
+		stackPop (stack2);
+	}
+
+	printf ("\n___________________________\n");
+
+	return;
+}
+
+//--------------------------------------------------------------------
+
+void select_mode (Tree* tree)
+{
+	assert (tree != nullptr);
+
+
+	NamesLvl levels = {};
+	find_lvls (STD_LVL_DIR, &levels);
+
+	introduction ();
+	printf ("lol\n");
+
 	printf ("mode [Q G C N D Q]> ");
-	char choice = (char)getchar ();
 
-	if (choice == 'P') {
-		printf ("Play mode\n");
-		tree_ctor (tree, &levels);
-		load_game (tree);
-	}
+	char choice = ' '; 
+	choice = (char)getchar ();
 
-	if (choice == 'G') {
-		printf ("Graph mode\n");
-		tree_ctor (tree, &levels);
-		create_graph (tree, 0);
-	}
+	switch (choice) {
+		case 'P': {
+			printf ("Play mode\n");
+			txSpeak ("vouvouvouvouvou Akinator nasel takovi urovni. viberete kde akinator budet hotet vas nahitrit");
+			tree_ctor (tree, &levels);
+			create_graph (tree, 0);
 
-	if (choice == 'C') {
-		printf ("Compare mode\n");
-	}
+			Stack stack = {};
+			stackCtor (&stack, 16);
+			load_game (tree, &stack);
+			return;
+		}
 
-	if (choice == 'N') {
-		printf ("Creating tree mode\n");
-		create_new_tree ();
-	}
+		case 'G': {
+			printf ("Graph mode\n");
+			tree_ctor (tree, &levels);
+			create_graph (tree, 0);
+			return;
+		}
 
-	if (choice == 'D') {
-		printf ("Description mode\n");
-		tree_ctor (tree, &levels);
+		case 'C': {
+			printf ("Compare mode\n");
+			compare_mode (tree, &levels);
+			return;
+		}
 
-		char search_data[MAX_DATA_LEN] = {};
-		fflush(stdin);
-		fgets (search_data, MAX_DATA_LEN, stdin);
-		search_data[strlen (search_data) - 1] = '\0';
+		case 'N': {
+			printf ("Creating tree mode\n");
+			create_new_tree ();
+			return;
+		}
 
-		Stack stack = {};
-		stackCtor (&stack, 16);
-		Node *search_node = nullptr;
+		case 'D': {
+			printf ("Description mode\n");
+			description_mode (&levels, tree);
+			// free (levels.names);
+			return;
+		}
 
-		search_object (tree->cur_node, search_data, &stack, &search_node);
-		tree->cur_node = tree->root;
-		print_path (&stack, tree->cur_node);
-	}
+		case 'Q': {
+			printf ("Quit mode\n");
+			return;
+		}
 
-	if (choice == 'Q') {
-		printf ("Quit mode\n");
+		default: {
+			printf ("incorrect data\n");
+			return;
+		}
 	}
 
 	return;
@@ -83,62 +375,135 @@ void select_mode (Tree* tree)
 
 //--------------------------------------------------------------------
 
-void create_new_tree ()
+void first_node_in_new_tree (Tree *tree)
 {
-	Tree new_tree = {};
-
-	new_tree.root = new_node (&new_tree);
-	new_tree.cur_node = new_tree.root;
-	new_tree.cur_node->is_endian = 1;
+	tree->root = new_node (tree);
+	tree->cur_node = tree->root;
+	tree->cur_node->is_endian = 1;
 
 	printf ("at first create one node with, write name of first object: ");
 	char new_data[MAX_DATA_LEN] = {};
 	fflush(stdin);
 	fgets (new_data, MAX_DATA_LEN, stdin);
 	new_data[strlen (new_data) - 1] = '\0';
-	// scanf ("%s", new_data);
-	strcpy (new_tree.cur_node->data, new_data);
-	create_graph (&new_tree, 0);
+	strcpy (tree->cur_node->data, new_data);
+	create_graph (tree, 0);
 
-	new_tree.cur_node = new_tree.root;
+	return;
+}
 
-	printf ("___[ instruction create mode ]_______\n");
+//--------------------------------------------------------------------
+
+static void create_new_tree_intro ()
+{
+	printf ("\n___[ instruction create mode ]_______\n");
 	printf ("[+] Create new Node in current position [new object have new param]\n");
 	printf ("[-] Create new Node in current position [old object have new param]\n");
 	printf ("[L] Move left\n");
 	printf ("[R] Move right\n");
 	printf ("[P] Move parent\n");
 	printf ("[E] End creating\n");
+	printf ("[C] Change cur data\n");
+	printf ("[T] Tide this node [make this node the last one]\n");
 	printf ("-------------------------------------\n");
+
+	return;
+}
+
+//--------------------------------------------------------------------
+
+void tide_node (Node *node)
+{
+	printf ("tide dat: %s\n", node->data);
+	if (node->is_endian != 1) {
+		node->is_endian = 1;
+		free (node->right);
+		free (node->left);
+	}
+	else {
+		printf ("this node is already last!\n");
+	}
+
+	return;
+}
+
+//--------------------------------------------------------------------
+
+void change_node_data (Node *node)
+{
+	char new_data[MAX_DATA_LEN] = "";
+
+	fflush (stdin);
+	fgets (new_data, MAX_DATA_LEN, stdin);
+	new_data[strlen (new_data) - 1] = '\0';
+
+	strcpy (node->data, new_data);
+
+	return;
+}
+
+
+//--------------------------------------------------------------------
+
+void create_new_tree ()
+{
+	Tree new_tree = {};
+
+	first_node_in_new_tree (&new_tree);
+
+	create_new_tree_intro();
 
 	char answ = ' ';
 	int active_node_index = 0;
 	while (answ != 'E') {
-		while (answ != '+' && answ != '-' && answ != 'L' && answ != 'R' && answ != 'P' && answ != 'E') {
+		while (answ != '+' && answ != '-' && answ != 'L' && answ != 'R' && answ != 'P' && answ != 'E' && answ != 'T' && answ != 'C') {
 			answ = (char)getchar ();
 		}
 		
-		if (answ == '+') {
-			printf ("add new: object ");
+		if (answ == 'T') {
 			Node *save_node = new_tree.cur_node;
-			expand_tree (&new_tree, 'l');
+			tide_node (new_tree.cur_node);
 			create_graph (&new_tree, active_node_index);
 			new_tree.cur_node = save_node;
 		}
 
-		if (answ == '-') {
-			printf ("add new: object ");
+		if (answ == 'C') {
 			Node *save_node = new_tree.cur_node;
-			expand_tree (&new_tree, 'r');
+			change_node_data (new_tree.cur_node);
 			create_graph (&new_tree, active_node_index);
 			new_tree.cur_node = save_node;
+		}
+
+		if (answ == '+') {
+			if (new_tree.cur_node->is_endian != 0) {
+				printf ("add new: object ");
+				Node *save_node = new_tree.cur_node;
+				expand_tree (&new_tree, 'l');
+				create_graph (&new_tree, active_node_index);
+				new_tree.cur_node = save_node;
+			}
+			else {
+				printf ("You can't add tree in filled (not endian node)\n");
+			}
+		}
+
+		if (answ == '-') {
+			if (new_tree.cur_node->is_endian != 0) {
+				printf ("add new: object ");
+				Node *save_node = new_tree.cur_node;
+				expand_tree (&new_tree, 'r');
+				create_graph (&new_tree, active_node_index);
+				new_tree.cur_node = save_node;
+			}
+			else {
+				printf ("You can't add tree in filled (not endian node)\n");
+			}
 		}
 
 		if (answ == 'L') {
 			if (new_tree.cur_node->is_endian != 1) {
 				Node *save_node = new_tree.cur_node->left;
 				active_node_index =  new_tree.cur_node->left->node_index;
-				// printf ("cur data: %s", new_tree.cur_node->data);
 				create_graph (&new_tree, active_node_index);
 
 				new_tree.cur_node = save_node;
@@ -154,7 +519,6 @@ void create_new_tree ()
 			if (new_tree.cur_node->is_endian != 1) {
 				Node *save_node = new_tree.cur_node->right;
 				active_node_index =  new_tree.cur_node->right->node_index;
-				// printf ("cur data: %s", new_tree.cur_node->data);
 				create_graph (&new_tree, active_node_index);
 
 				new_tree.cur_node = save_node;
@@ -205,9 +569,59 @@ void create_new_tree ()
 		print_node (new_tree.cur_node, new_file);
 		fclose (new_file);
 	}
+	else {
+		printf ("last:\n");
+		exit (0);
+	}
+}
+
+//--------------------------------------------------------------------
+
+void expand_right (Tree *tree, char *new_object, char *old_object, char *new_data)
+{
+	tree->cur_node->left = new_node (tree);
+	strcpy (tree->cur_node->left->data, new_object);
+
+	tree->cur_node->left->is_endian = 1;
+
+	printf ("what feature does the new object have in contrast to %s?\n", old_object);
+
+	fflush(stdin);
+	fgets (new_data, MAX_DATA_LEN, stdin);
+	new_data[strlen (new_data) - 1] = '\0';
+	strcpy (tree->cur_node->data, new_data);
+
+	tree->cur_node->right = new_node (tree);
+	strcpy (tree->cur_node->right->data, old_object);
+	tree->cur_node->right->is_endian = 1;
 
 	return;
 }
+
+//--------------------------------------------------------------------
+
+void expand_left (Tree *tree, char *new_object, char *old_object, char *new_data)
+{
+	tree->cur_node->right = new_node (tree);
+	strcpy (tree->cur_node->right->data, new_object);
+
+	tree->cur_node->right->is_endian = 1;
+
+	printf ("what feature does the OLD object have in contrast to %s?\n", new_object);
+
+	fflush(stdin);
+	fgets (new_data, MAX_DATA_LEN, stdin);
+	new_data[strlen (new_data) - 1] = '\0';
+	strcpy (tree->cur_node->data, new_data);
+
+	tree->cur_node->left = new_node (tree);
+	strcpy (tree->cur_node->left->data, old_object);
+	tree->cur_node->left->is_endian = 1;
+
+	return;
+}
+
+//--------------------------------------------------------------------
 
 void expand_tree (Tree *tree, char side)
 {
@@ -225,38 +639,10 @@ void expand_tree (Tree *tree, char side)
 	new_object[strlen (new_object) - 1] = '\0';
 
 	if (side == 'l') {
-		tree->cur_node->left = new_node (tree);
-		strcpy (tree->cur_node->left->data, new_object);
-
-		tree->cur_node->left->is_endian = 1;
-
-		printf ("what feature does the new object have in contrast to %s?\n", old_object);
-
-		fflush(stdin);
-		fgets (new_data, MAX_DATA_LEN, stdin);
-		new_data[strlen (new_data) - 1] = '\0';
-		strcpy (tree->cur_node->data, new_data);
-
-		tree->cur_node->right = new_node (tree);
-		strcpy (tree->cur_node->right->data, old_object);
-		tree->cur_node->right->is_endian = 1;
+		expand_right (tree, new_object, old_object, new_data);
 	}
 	else if (side == 'r') {
-		tree->cur_node->right = new_node (tree);
-		strcpy (tree->cur_node->right->data, new_object);
-
-		tree->cur_node->right->is_endian = 1;
-
-		printf ("what feature does the OLD object have in contrast to %s?\n", new_object);
-
-		fflush(stdin);
-		fgets (new_data, MAX_DATA_LEN, stdin);
-		new_data[strlen (new_data) - 1] = '\0';
-		strcpy (tree->cur_node->data, new_data);
-
-		tree->cur_node->left = new_node (tree);
-		strcpy (tree->cur_node->left->data, old_object);
-		tree->cur_node->left->is_endian = 1;
+		expand_left (tree, new_object, old_object, new_data);
 	}
 	else {
 		printf ("function ran with bad param\n");
@@ -276,6 +662,8 @@ void chose_data_file (Tree *tree, NamesLvl *lvls)
 		printf ("[%zu] %s\n", file, lvls->names[file].ptr);
 	}
 	int choice = -1;
+
+	// printf ("askgjasdkgja;sg\n");
 	while (choice < 0 || choice > (int)lvls->size) {
 		scanf ("%d", &choice);
 	}
@@ -300,8 +688,8 @@ void tree_ctor (Tree *tree, NamesLvl *lvls)
 	tree->root     = new_node (tree);
 	tree->cur_node = tree->root;
 
+	printf ("hELLO!\n");
 	chose_data_file (tree, lvls);
-
 	FILE *file = fopen (tree->name_of_data_file, "r");
 	// FILE *file = fopen (".lvls/data.tree", "r");
 	get_data (tree, file);
@@ -319,15 +707,11 @@ size_t find_lvls (const char *dir, NamesLvl *lvls)
   assert (lvls != nullptr);
   assert (dir  != nullptr);
 
-  chdir (dir);
-
-  lvls->names = (Line *)calloc (1, sizeof (Line));
+  lvls->names = (Line *)calloc (MAX_DATA_LEN, sizeof (Line));
   lvls->capacity = 0;
 
   size_t num_sol = find_all_ext_coincidences (AKI_EXT, lvls);
-  // printf ("hello1\n");
-
-  chdir ("../");
+  // system ("dir");
 
   return num_sol;
 }
@@ -360,6 +744,7 @@ void get_data (Tree *tree, FILE* txt)
 	strcpy (tree->cur_node->data, cur_data);
 
 	char *sym_n = strchr (tree->cur_node->data, '\n');
+
 	if (sym_n != nullptr) {
 		*sym_n = '\0';
 	}
@@ -407,7 +792,6 @@ void create_graph (Tree *tree, int active_node_index)
   fprintf (graph_file, "digraph G {\n");
 
   tree->cur_node = tree->root;
-
   write_tree (tree->cur_node, graph_file, active_node_index);
 
   tree->cur_node = tree->root;
@@ -419,6 +803,8 @@ void create_graph (Tree *tree, int active_node_index)
   char command[100] = {};
   sprintf (command, "dot %s -T png -o %s", DUMP_FILE, VIZ_FILE);
   system (command);
+
+  tree->cur_node = tree->root;
 
   return;
 }
@@ -443,7 +829,7 @@ void write_tree (Node *node, FILE *graph_file, int is_active)
 		strcpy (message, node->data);
 		strcat (message, "?");
 
-		if (node->node_index == is_active) {
+		if (node->node_index == is_active || node->is_active == 1) {
 			fprintf (graph_file, "\tL%d[shape=\"record\",style=\"filled\",fillcolor=\"burlywood1\", label=\" <lp%d> %s | { %s: %d %s: %d | %s} | <lp%d> %s\"];\n",
 				node->node_index, node->node_index + 1, yes_a, ind,
 				node->node_index, is_end, node->is_endian, message,
@@ -460,7 +846,7 @@ void write_tree (Node *node, FILE *graph_file, int is_active)
 		write_tree (node->left, graph_file, is_active);
 	}
 	else {
-		if (node->node_index == is_active) {
+		if (node->node_index == is_active || node->is_active == 1) {
 			fprintf (graph_file, "\tL%d[shape=\"record\",style=\"filled\",fillcolor=\"burlywood1\", label=\" { %s: %d %s: %d | %s}\"];\n",
 				node->node_index, ind, node->node_index, is_end, node->is_endian, node->data);
 		}
@@ -478,6 +864,7 @@ void write_tree (Node *node, FILE *graph_file, int is_active)
 void connect_tree (Node *node, FILE *graph_file)
 {
 	assert (graph_file != nullptr);
+	assert (node       != nullptr);
 
 	if (node == nullptr) {
 		return;
@@ -506,19 +893,59 @@ void connect_tree (Node *node, FILE *graph_file)
 
 //--------------------------------------------------------------------
 
-void load_game (Tree *tree)
+void load_game (Tree *tree, Stack *stack)
 {
 	assert (tree != nullptr);
 
-	while (tree->cur_node->is_endian != true) {
-		txSpeak ("\vAkinator interesovatsa... neuzto %20s? [Y/N] ", tree->cur_node->data);
+	while (tree->cur_node->is_endian != true || stack->size != 0) {
+		txSpeak ("\vAkinator interesovatsa... ito %20s? [Y/N/IDN] ", tree->cur_node->data);
 
+		char answ[4] = {};
+
+		if (tree->cur_node->is_endian == 1) {
+			printf("last::\n");
+			fflush (stdin);
+			fgets (answ, 4, stdin);
+			if (answ[0] == 'Y') {
+				break;
+			}
+			else if (answ[0] == 'N') {
+				stackTop (stack, &tree->cur_node);
+				stackPop (stack);
+				
+				tree->cur_node = tree->cur_node->right;
+				
+				continue;
+			}
+		}
+
+		fflush (stdin);
+		fgets (answ, 4, stdin);
+		if (answ[0] == 'I') {
+			stackPush (stack, tree->cur_node);
+			tree->cur_node = tree->cur_node->left;
+			continue;
+		}
+		else if (answ[0] == 'Y') {
+			tree->cur_node = tree->cur_node->left;
+			continue;
+		}
+		else if (answ[0] == 'N') {
+			tree->cur_node = tree->cur_node->right;
+			continue;
+		}
+		else {
+			printf ("incorrect data");
+		}
+
+		/*
 		if (get_ans ()) {
 			tree->cur_node = tree->cur_node->left;
 		}
 		else {
 			tree->cur_node = tree->cur_node->right;
 		}
+		*/
 	}
 
 	printf ("------------------------------------\n");
@@ -526,6 +953,18 @@ void load_game (Tree *tree)
 	
 	if (get_ans ()) {
 		txSpeak ("\vleeeeeeee opyat pobedil! azazazazazaz. bylo neslozno)!\n");
+		txSpeak ("\vza takov prekrasni pobeda vi platit akinatoru sto rublei\n");
+		printf ("zaplatit ");
+		int sallary = 0;
+		scanf ("%d", &sallary);
+		if (sallary > 100) {
+			txSpeak ("Akinator dovooolen, prihodite escho!");
+		}
+		else {
+			txSpeak ("Leeee nu kak tak, togda ya s vami ne igrau");
+
+			printf ("[ Akinator obidelsa ]\n");
+		}
 		tree->cur_node = tree->root;
 
 		return;
@@ -543,37 +982,6 @@ void load_game (Tree *tree)
 	}
 
 	return;
-}
-
-//--------------------------------------------------------------------
-
-void add_node (Tree *tree)
-{
-	assert (tree != nullptr);
-
-	char new_object[100] = {};
-	char old_object[100] = {};
-	char   new_data[100] = {};
-
-
-	tree->cur_node->is_endian = 0;
-	strcpy (old_object, tree->cur_node->data);
-
-	scanf ("%s", new_object);
-
-	tree->cur_node->left = new_node (tree);
-	strcpy (tree->cur_node->left->data, new_object);
-	tree->cur_node->left->is_endian = 1;
-
-
-	printf ("what feature does the new object have in contrast to the old one?\n");
-	scanf ("%s",  new_data);
-	strcpy (tree->cur_node->data, new_data);
-
-	tree->cur_node->right = new_node (tree);
-	printf ("old: %s", old_object);
-	strcpy (tree->cur_node->right->data, old_object);
-	tree->cur_node->right->is_endian = 1;
 }
 
 //--------------------------------------------------------------------
@@ -620,78 +1028,12 @@ void print_node (Node *node, FILE *file)
 			NODE_DATA(node->right->data)
 		}
 	}
+
 	if (node->parent != nullptr) {
 		fprintf (file, "}\n");
 	}
 
 	return;
-}
-
-//--------------------------------------------------------------------
-
-void search_object (Node *node, char *data, Stack *stack, Node **saving_node)
-{
-	if (node->left->is_endian != 1) {
-		stackPush (stack, node);
-		search_object (node->left, data, stack, saving_node);
-	}
-	else {
-		if (strcmp (node->left->data, data) == 0) {
-			printf ("WE FIND: %s\n", node->left->data);
-			stackPush (stack, node);
-
-			*saving_node = node;
-		}
-		else {
-		}
-	}
-
-	if (node->right->is_endian != 1) {
-		stackPush (stack, node);
-		search_object (node->right, data, stack, saving_node);
-	}
-	else {
-		if (strcmp (node->right->data, data) == 0) {
-			stackPush (stack, node);
-			printf ("WE FIND: %s\n", node->right->data);
-
-			*saving_node = node;
-		}
-		else {
-			if (stack->size > 0) {
-				stackPop (stack);
-			}
-		}
-	}
-
-	return;
-}
-
-//--------------------------------------------------------------------
-
-void print_path (Stack *stack, Node *node)
-{
-	while (stack->size > 0) {
-		Node *stack_node = nullptr;
-		stackTop (stack, &stack_node);
-		printf ("o: %s\n", stack_node->data);
-		/*
-		if (stack_node == 2) {
-			printf ("ne %s\n", node->data);
-		}
-		else if (stack_node == 1) {
-			printf ("%s\n", node->data);
-		}
-
-		if (node->parent != nullptr) {
-			node = node->parent;
-		}
-		*/
-
-		if (stack->size > 0) {
-			stackPop (stack);
-		}
-	}
 }
 
 //--------------------------------------------------------------------
@@ -736,74 +1078,4 @@ void compare_objects (Tree *tree, Stack *stack, Stack *stack2)
 }
 
 //--------------------------------------------------------------------
-
-void print_difference (int *ptr1, int *ptr2, char *find1, Node *node1, char *find2, Node *node2)
-{
-	printf ("\n____[difference]__________________________\n");
-	int index = 0;
-	while (ptr1[index] == ptr2[index]) {
-		printf ("equel: %-20s %-20s data: %s\n", find1, find2, node1->data);
-		if (ptr1[index] == 2) {
-			node1 = node1->right;
-			node2 = node2->right;
-		}
-		else {
-			node1 = node1->left;
-			node2 = node2->left;
-		}
-		index++;
-	}
-
-	while (node1->is_endian != 1 || node2->is_endian != 1) {
-		if (node1->is_endian == 1 ) {
-			printf ("%s %-20s ", find1, "-");
-		}
-		else {
-			if (ptr1[index] == 2) {
-				printf ("%s: NE %-20s", find1, node1->data);
-				if (node1->right != nullptr) {
-					node1 = node1->right;
-				}
-				else {
-
-				}
-			}
-			else {
-				printf ("%s: %-20s", find1, node1->data);
-				if (node1->left != nullptr) {
-					node1 = node1->left;
-				}
-				else {
-					
-				}
-			}		
-		}
-
-		if (node2->is_endian == 1) {
-			printf ("%s: %-20s \n", find2, "-");
-		}
-		else {
-			if (ptr2[index] == 2) {
-				printf ("%s: NE %s\n", find2, node2->data);
-				if (node2->right != nullptr) {
-					node2 = node2->right;
-				}
-				else {
-					
-				}
-
-			}
-			else {
-				printf ("%s: %-20s\n", find2, node2->data);
-				if (node2->left != nullptr) {
-					node2 = node2->left;
-				}
-				else {
-					
-				}
-			}
-			index++;
-		}
-	}
-}
 */
