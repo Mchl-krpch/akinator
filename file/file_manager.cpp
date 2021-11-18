@@ -75,8 +75,6 @@ size_t find_all_ext_coincidences (const char *ext, NamesLvl *lvls)
 
   dir = opendir (STD_LVL_DIR);
 
-  // system ("dir");
-
   while (dir) {
   	de = readdir (dir);
     
@@ -88,36 +86,14 @@ size_t find_all_ext_coincidences (const char *ext, NamesLvl *lvls)
   		lvls->size++;
 
   		lvls->names[find_counter].ptr = (char *)calloc (32, sizeof (char));
-    	// printf ("n find: %s\n", de->d_name);
 
   		strcpy (lvls->names[find_counter].ptr, de->d_name);
   		printf ("n find: %s\n", lvls->names[find_counter].ptr);
 
   		find_counter++;
-  	}
-
-  	/*
-  	if (readdir (dir) == nullptr) {
-    	continue;
-    }
-    de = readdir (dir);
-    if (!de) {
-    	break;
-    }
-
-    if (check_ext (de->d_name, ext)){
-  		lvls->size++;
-
-  		lvls->names[find_counter].ptr = (char *)calloc (32, sizeof (char));
-
-  		strcpy (lvls->names[find_counter].ptr, de->d_name);
-  		printf ("n find: %s\n", lvls->names[find_counter].ptr);
-
-  		find_counter++;
-    }
-    */
-    
+  	}    
   }
+
   closedir (dir);
 
   return find_counter;

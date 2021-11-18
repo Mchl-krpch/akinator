@@ -11,7 +11,7 @@ digraph G {
 	L37[shape="record", label=" { index: 37 is_end: 1 | Dashkov}"];
 	L31[shape="record", label=" <lp32> yes | { index: 31 is_end: 0 | po kollokviumu 10?} | <lp33> no"];
 	L33[shape="record", label=" <lp34> yes | { index: 33 is_end: 0 | napisal render drakona?} | <lp35> no"];
-	L35[shape="record", label=" { index: 35 is_end: 1 | stas}"];
+	L35[shape="record",style="filled",fillcolor="burlywood1", label=" { index: 35 is_end: 1 | stas}"];
 	L34[shape="record", label=" { index: 34 is_end: 1 | Tima}"];
 	L32[shape="record", label=" { index: 32 is_end: 1 | misha glinsky}"];
 	L27[shape="record", label=" <lp28> yes | { index: 27 is_end: 0 | kurator?} | <lp29> no"];
@@ -41,7 +41,7 @@ digraph G {
 	L4[shape="record", label=" <lp5> yes | { index: 4 is_end: 0 | McDonalds?} | <lp6> no"];
 	L6[shape="record", label=" { index: 6 is_end: 1 | Kruggets}"];
 	L5[shape="record", label=" { index: 5 is_end: 1 | Big Mak}"];
-	L3[shape="record", label=" { index: 3 is_end: 1 | Yabloko}"];
+	L3[shape="record",style="filled",fillcolor="burlywood1", label=" { index: 3 is_end: 1 | Yabloko}"];
 	L0:<lp1> -> L1[color="blue"];
 	L1:<lp2> -> L2[color="blue"];
 	L2:<lp3> -> L3[color="blue"];

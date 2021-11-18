@@ -15,7 +15,7 @@
 
 static void introduction ()
 {
-	txSpeak ("vas privetstvuit inostranni pragramma Akinator! Smotrite!");
+	// txSpeak ("vas privetstvuit inostranni pragramma Akinator! Smotrite!");
 
 	printf ("(Chose mode)\n\n");
 	printf ("_____[ Akinator program ]______________\n");
@@ -27,8 +27,8 @@ static void introduction ()
 	printf ("[Q] Quit\n");
 	printf ("---------------------------------------\n");
 
-	txSpeak ("Akinator mozet otgadat to chto ti dumal, risovat graf, sravnit, sozdat derevo, nahodit cho-to");
-	txSpeak ("esli Akinator vas uze dostal wi mozete vibrat Kwit");
+	// txSpeak ("Akinator mozet otgadat to chto ti dumal, risovat graf, sravnit, sozdat derevo, nahodit cho-to");
+	// txSpeak ("esli Akinator vas uze dostal wi mozete vibrat Kwit");
 
 	return;
 }
@@ -56,37 +56,10 @@ static void description_mode (NamesLvl *levels, Tree *tree)
 	create_graph (tree, 0);
 	printf ("\n____[ Desctiption ]___________\n");
 	print_path (&stack, search_node);
-	/*
-	while (search_node->parent != nullptr) {
-		stackPush (&stack, search_node->parent);
-
-		search_node = search_node->parent;
-		printf ("size: %d\n", stack.size);
-	}
-
-	Node *print_node  = nullptr;
-	Node *print_node2 = nullptr;
-	stackTop (&stack, &print_node);
-	stackPop (&stack);
-	while (stack.size > 0) {
-		stackTop (&stack, &print_node2);
-		if ( strcmp (print_node->right->data, print_node2->data) == 0) {
-			printf ("Ne %s ", print_node->data);
-		}
-		else {
-			printf ("%s ", print_node->data);
-		}
-
-		print_node = print_node2;
-
-		stackPop (&stack);
-	}
-	*/
 
 	stackDtor (&stack);
 	return;
 }
-
 
 //--------------------------------------------------------------------
 
@@ -98,14 +71,12 @@ void search_object (Node *node, char *data, Stack *stack, Node **saving_node)
 	assert (stack       != nullptr);
 
 	if (node->left->is_endian != 1) {
-		// stackPush (stack, node->left);
 		search_object (node->left, data, stack, saving_node);
 	}
 	else {
 		if (strcmp (node->left->data, data) == 0) {
 			node->left->is_active = 1;
 
-			// printf ("WE FIND: %s\n", node->left->data);
 			stackPush (stack, node->left);
 
 			*saving_node = node->left;
@@ -121,14 +92,11 @@ void search_object (Node *node, char *data, Stack *stack, Node **saving_node)
 			node->right->is_active = 1;
 
 			stackPush (stack, node->right);
-			// printf ("WE FIND: %s\n", node->right->data);
 
 			*saving_node = node->right;
 			return;
 		}
 	}
-
-	// stackPush (stack, node);
 
 	return;
 }
@@ -147,13 +115,13 @@ void print_path (Stack *stack, Node *search_node)
 		stackPush (stack, search_node->parent);
 
 		search_node = search_node->parent;
-		// printf ("size: %d\n", stack->size);
 	}
 
 	Node *print_node  = nullptr;
 	Node *print_node2 = nullptr;
 	stackTop (stack, &print_node);
 	stackPop (stack);
+
 	while (stack->size > 0) {
 		stackTop (stack, &print_node2);
 		if ( strcmp (print_node->right->data, print_node2->data) == 0) {
@@ -174,10 +142,11 @@ void print_path (Stack *stack, Node *search_node)
 static void compare_mode (Tree *tree, NamesLvl *levels)
 {
 	tree_ctor (tree, levels);
+	create_graph (tree, 0);
 
-	char search_data[MAX_DATA_LEN] = {};
-	// printf ("we find 1st object: ");
+	char search_data[MAX_DATA_LEN] = "";
 
+	printf ("o1: ");
 	fflush (stdin);
 	fgets (search_data, MAX_DATA_LEN, stdin);
 	search_data[strlen (search_data) - 1] = '\0';
@@ -186,19 +155,16 @@ static void compare_mode (Tree *tree, NamesLvl *levels)
 	stackCtor (&stack, 16);
 	Node *search_node = nullptr;
 	search_object (tree->cur_node, search_data, &stack, &search_node);
-	// print_path (search_node);
-
-	// printf ("we find 2nd object: ");
 
 	Stack stack2 = {};
 	stackCtor (&stack2, 16);
 
+	printf ("o2: ");
 	Node *search_node2 = nullptr;
 	fflush(stdin);
 	fgets (search_data, MAX_DATA_LEN, stdin);
 	search_data[strlen (search_data) - 1] = '\0';
 	search_object (tree->cur_node, search_data, &stack2, &search_node2);
-	// print_path (search_node2);
 
 	create_graph (tree, 0);
 
@@ -211,6 +177,14 @@ static void compare_mode (Tree *tree, NamesLvl *levels)
 
 void print_difference (Stack *stack1, Node *search_node1, Stack *stack2, Node *search_node2)
 {
+	assert (stack1 != nullptr);
+	assert (stack2 != nullptr);
+
+	if (search_node1 == nullptr || search_node2 == nullptr) {
+		printf ("incorrect data\n");
+		return;
+	}
+
 	while (search_node1->parent != nullptr) {
 		stackPush (stack1, search_node1->parent);
 
@@ -223,6 +197,7 @@ void print_difference (Stack *stack1, Node *search_node1, Stack *stack2, Node *s
 		search_node2 = search_node2->parent;
 	}
 
+// [ #### SKIP OWN NODES ################################# ]
 	Node *print_node11 = nullptr;
 	Node *print_node12 = nullptr;
 
@@ -241,26 +216,27 @@ void print_difference (Stack *stack1, Node *search_node1, Stack *stack2, Node *s
 		stackPop (stack2);
 	}
 
-	printf ("dif. start at node with data: %s\n", print_node11->parent->data);
+	printf ("\ndif. start at node with data: %s\n", print_node11->parent->data);
 	printf ("\n____[difference]__________________________\n");
 
+// [ #### WRITE LAST OWN NODES ############################ ]
 	while (stack1->size > 0 && stack2->size > 0) {
 		stackTop (stack1, &print_node12);
 		if (strcmp (print_node11->right->data, print_node12->data) == 0) {
-			printf ("1] ne %10s ", print_node11->data);
+			printf ("1] ne %-20s ", print_node11->data);
 		}
 		else {
-			printf ("1] %10s", print_node11->data);
+			printf ("1] %-20s    ", print_node11->data);
 		}
 
 		print_node11 = print_node12;
 
 		stackTop (stack2, &print_node22);
 		if (strcmp (print_node21->right->data, print_node22->data) == 0) {
-			printf ("2] ne %10s\n", print_node21->data);
+			printf ("2] ne %-20s\n", print_node21->data);
 		}
 		else {
-			printf ("2] %10s\n", print_node21->data);
+			printf ("2] %-20s   \n", print_node21->data);
 		}
 
 		print_node21 = print_node22;
@@ -269,13 +245,14 @@ void print_difference (Stack *stack1, Node *search_node1, Stack *stack2, Node *s
 		stackPop (stack2);
 	}
 
+// [ #### WRITE LAST LEFT NODES ############################ ]
 	while (stack1->size > 0) {
 		stackTop (stack1, &print_node12);
 		if ( strcmp (print_node11->right->data, print_node12->data) == 0) {
-			printf ("1] ne %10s\n", print_node11->data);
+			printf ("1] ne %-20s\n", print_node11->data);
 		}
 		else {
-			printf ("1]    %10s\n", print_node11->data);
+			printf ("1] %-20s   \n", print_node11->data);
 		}
 
 		print_node11 = print_node12;
@@ -283,13 +260,14 @@ void print_difference (Stack *stack1, Node *search_node1, Stack *stack2, Node *s
 		stackPop (stack1);
 	}
 
+// [ #### WRITE LAST RIGHT NODES ########################### ]
 	while (stack2->size > 0) {
 		stackTop (stack2, &print_node22);
 		if ( strcmp (print_node21->right->data, print_node22->data) == 0) {
-			printf ("\t\t 2] ne %10s\n", print_node21->data);
+			printf ("\t\t\t   2] ne %-20s\n", print_node21->data);
 		}
 		else {
-			printf ("\t\t 2]    %10s\n", print_node21->data);
+			printf ("\t\t\t   2] %-20s\n", print_node21->data);
 		}
 
 		print_node21 = print_node22;
@@ -297,7 +275,7 @@ void print_difference (Stack *stack1, Node *search_node1, Stack *stack2, Node *s
 		stackPop (stack2);
 	}
 
-	printf ("\n___________________________\n");
+	printf ("__________________________________________\n");
 
 	return;
 }
@@ -307,7 +285,6 @@ void print_difference (Stack *stack1, Node *search_node1, Stack *stack2, Node *s
 void select_mode (Tree* tree)
 {
 	assert (tree != nullptr);
-
 
 	NamesLvl levels = {};
 	find_lvls (STD_LVL_DIR, &levels);
@@ -323,7 +300,8 @@ void select_mode (Tree* tree)
 	switch (choice) {
 		case 'P': {
 			printf ("Play mode\n");
-			txSpeak ("vouvouvouvouvou Akinator nasel takovi urovni. viberete kde akinator budet hotet vas nahitrit");
+			printf ("vouvouvouvouvou Akinator nasel takovi urovni. viberete kde akinator budet hotet vas nahitrit");
+			
 			tree_ctor (tree, &levels);
 			create_graph (tree, 0);
 
@@ -355,7 +333,6 @@ void select_mode (Tree* tree)
 		case 'D': {
 			printf ("Description mode\n");
 			description_mode (&levels, tree);
-			// free (levels.names);
 			return;
 		}
 
@@ -441,7 +418,6 @@ void change_node_data (Node *node)
 
 	return;
 }
-
 
 //--------------------------------------------------------------------
 
@@ -663,7 +639,6 @@ void chose_data_file (Tree *tree, NamesLvl *lvls)
 	}
 	int choice = -1;
 
-	// printf ("askgjasdkgja;sg\n");
 	while (choice < 0 || choice > (int)lvls->size) {
 		scanf ("%d", &choice);
 	}
@@ -688,10 +663,9 @@ void tree_ctor (Tree *tree, NamesLvl *lvls)
 	tree->root     = new_node (tree);
 	tree->cur_node = tree->root;
 
-	printf ("hELLO!\n");
 	chose_data_file (tree, lvls);
 	FILE *file = fopen (tree->name_of_data_file, "r");
-	// FILE *file = fopen (".lvls/data.tree", "r");
+
 	get_data (tree, file);
 
 	tree->cur_node = tree->root;
@@ -711,7 +685,6 @@ size_t find_lvls (const char *dir, NamesLvl *lvls)
   lvls->capacity = 0;
 
   size_t num_sol = find_all_ext_coincidences (AKI_EXT, lvls);
-  // system ("dir");
 
   return num_sol;
 }
@@ -895,15 +868,16 @@ void connect_tree (Node *node, FILE *graph_file)
 
 void load_game (Tree *tree, Stack *stack)
 {
-	assert (tree != nullptr);
+	assert (tree  != nullptr);
+	assert (stack != nullptr);
 
 	while (tree->cur_node->is_endian != true || stack->size != 0) {
-		txSpeak ("\vAkinator interesovatsa... ito %20s? [Y/N/IDN] ", tree->cur_node->data);
+		printf ("\vAkinator interesovatsa... ito %20s? [Y/N/IDN] ", tree->cur_node->data);
 
 		char answ[4] = {};
 
 		if (tree->cur_node->is_endian == 1) {
-			printf("last::\n");
+			printf("last:: ");
 			fflush (stdin);
 			fgets (answ, 4, stdin);
 			if (answ[0] == 'Y') {
@@ -937,31 +911,22 @@ void load_game (Tree *tree, Stack *stack)
 		else {
 			printf ("incorrect data");
 		}
-
-		/*
-		if (get_ans ()) {
-			tree->cur_node = tree->cur_node->left;
-		}
-		else {
-			tree->cur_node = tree->cur_node->right;
-		}
-		*/
 	}
 
 	printf ("------------------------------------\n");
-	txSpeak ("\vAkinator dumat, chto ito %20s? [Y/N] ", tree->cur_node->data);
+	printf ("\vAkinator dumat, chto ito %20s? [Y/N] ", tree->cur_node->data);
 	
 	if (get_ans ()) {
-		txSpeak ("\vleeeeeeee opyat pobedil! azazazazazaz. bylo neslozno)!\n");
-		txSpeak ("\vza takov prekrasni pobeda vi platit akinatoru sto rublei\n");
+		printf ("\vleeeeeeee opyat pobedil! azazazazazaz. bylo neslozno)!\n");
+		printf ("\vza takov prekrasni pobeda wi platit akinatoru sto rublei\n");
 		printf ("zaplatit ");
 		int sallary = 0;
 		scanf ("%d", &sallary);
-		if (sallary > 100) {
-			txSpeak ("Akinator dovooolen, prihodite escho!");
+		if (sallary >= 100) {
+			printf ("Akinator dovooolen, prihodite escho!");
 		}
 		else {
-			txSpeak ("Leeee nu kak tak, togda ya s vami ne igrau");
+			printf ("Leeee nu kak tak, togda ya s vami ne igrau");
 
 			printf ("[ Akinator obidelsa ]\n");
 		}
@@ -970,7 +935,7 @@ void load_game (Tree *tree, Stack *stack)
 		return;
 	}
 	else {
-		txSpeak ("\vleeeeeee, togda akinator ne znat, ikarni babai a chto ti zagadival?\n");
+		printf ("\vleeeeeee, togda akinator ne znat, ikarni babai a chto ti zagadival?\n");
 		expand_tree (tree, 'l');
 
 		tree->cur_node = tree->root;
@@ -1035,47 +1000,3 @@ void print_node (Node *node, FILE *file)
 
 	return;
 }
-
-//--------------------------------------------------------------------
-/*
-void compare_objects (Tree *tree, Stack *stack, Stack *stack2)
-{
-	printf ("FIRST OBJ: ");
-	char find1[32] = {};
-	scanf ("%s", find1);
-	Node *find_node = nullptr;
-	search_object (tree->cur_node, find1, stack, &find_node);
-
-	int ptr1[10] = {};
-	int cap = stack->size;
-	for (int i = 0; i < cap; i++) {
-		int val = 0;
-		stackTop (stack, &val);
-		ptr1[cap - i - 1] = val;
-		printf ("[WRITE: %d pos: %d]\n", ptr1[cap - i - 1], cap - i - 1);
-		stackPop (stack);
-	}
-
-	printf ("SECOND OBJ: ");
-	char find2[32] = {};
-	scanf ("%s", find2);
-	Node *find_node2 = nullptr;
-	search_object (tree->cur_node, find2, stack2, &find_node2);
-
-	int ptr2[10] = {};
-	int cap2 = stack2->size;
-	for (int i = 0; i < cap2; i++) {
-		int val = 0;
-		stackTop (stack2, &val);
-		ptr2[cap2 - i - 1] = val;
-		printf ("%d", ptr2[cap2 - i - 1]);
-		stackPop (stack2);
-	}
-
-	print_difference (ptr1, ptr2, find1, tree->cur_node, find2, tree->cur_node);
-
-	return;
-}
-
-//--------------------------------------------------------------------
-*/
