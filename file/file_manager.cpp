@@ -69,38 +69,38 @@ size_t find_all_ext_coincidences (const char *ext, NamesLvl *lvls)
 	size_t find_counter = 0;
 
 	DIR *dir;
-  struct dirent *de;
+	struct dirent *de;
 
-  char dir_path[MAX_DIR_PATH] = {};
+	char dir_path[MAX_DIR_PATH] = {};
 	getcwd (dir_path, MAX_DIR_PATH);
 
-  dir = opendir (STD_LVL_DIR);
+	dir = opendir (STD_LVL_DIR);
 
-  while (dir) {
-  	de = readdir (dir);
-    
-    if (!de) {
-    	break;
-    }
+	while (dir) {
+		de = readdir (dir);
+		
+		if (!de) {
+			break;
+		}
 
-  	if (strchr (de->d_name, '.') != NULL &&
-  		  check_ext (de->d_name, ext)){
+		if (strchr (de->d_name, '.') != NULL &&
+				check_ext (de->d_name, ext)){
 
-  		lvls->size++;
+			lvls->size++;
 
-  		lvls->names[find_counter].ptr =
-  										(char *)calloc (32, sizeof (char));
+			lvls->names[find_counter].ptr =
+											(char *)calloc (32, sizeof (char));
 
-  		strcpy (lvls->names[find_counter].ptr, de->d_name);
-  		printf ("n find: %s\n", lvls->names[find_counter].ptr);
+			strcpy (lvls->names[find_counter].ptr, de->d_name);
+			// printf ("n find: %s\n", lvls->names[find_counter].ptr);
 
-  		find_counter++;
-  	}    
-  }
+			find_counter++;
+		}    
+	}
 
-  closedir (dir);
+	closedir (dir);
 
-  return find_counter;
+	return find_counter;
 }
 
 //--------------------------------------------------------------------
@@ -109,8 +109,6 @@ bool check_ext (char *name, const char *ext)
 {
 	assert (name != nullptr);
 	assert (ext  != nullptr);
-
-	// printf ("hello3\n");
 
 	char file_extencion[10] = {};
 	split_last_word (name, file_extencion, '.', 5);

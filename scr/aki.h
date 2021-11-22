@@ -103,7 +103,7 @@ struct Tree {
   int index                  = 0;
   FILE *dump_file            = nullptr;
   FILE *data_file            = nullptr;
-  char name_of_data_file[32] = {};
+  char name_of_data_file[MAX_WORD_LEN] = {};
 
 	Node *root                 = nullptr;
 	Node *cur_node             = nullptr;

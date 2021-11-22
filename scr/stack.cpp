@@ -18,7 +18,7 @@
 
 #include "stack.h"
 
-StackError stackCtor (Stack *stack, unsigned int start_capacity)
+StackError stack_ctor (Stack *stack, unsigned int start_capacity)
 {
   if (stack == nullptr) {
     printf ("fatal error func: %s(), check stack ptr\n", __func__);
@@ -40,7 +40,7 @@ StackError stackCtor (Stack *stack, unsigned int start_capacity)
 
 //---------------------------------------------------------------------------------------
 
-StackError stackPush (Stack *stack, stack_t new_elem)
+StackError stack_push (Stack *stack, stack_t new_elem)
 {
   if (stack == nullptr) {
     printf ("fatal error func: %s(), check stack ptr\n", __func__);
@@ -57,7 +57,7 @@ StackError stackPush (Stack *stack, stack_t new_elem)
   }
 
   if (stack->size >= stack->capacity) {
-    stackResize (stack, stack->capacity * REALLOC_COEFF);
+    stack_resize (stack, stack->capacity * REALLOC_COEFF);
   }
 
   stack->data[stack->size] = new_elem;
@@ -68,7 +68,7 @@ StackError stackPush (Stack *stack, stack_t new_elem)
 
 //---------------------------------------------------------------------------------------
 
-StackError stackResize (Stack *stack, size_t increase_by)
+StackError stack_resize (Stack *stack, size_t increase_by)
 {
     if (stack == nullptr) {
       printf ("fatal error in func: %s(), check stack ptr \n", __func__);
@@ -98,7 +98,7 @@ StackError stackResize (Stack *stack, size_t increase_by)
 
 //---------------------------------------------------------------------------------------
 
-StackError stackTop (Stack *stack, stack_t *top_element)
+StackError stack_top (Stack *stack, stack_t *top_element)
 {
   if (stack == nullptr) {
     printf ("fatal error func: %s(), check stack ptr\n", __func__);
@@ -125,7 +125,7 @@ StackError stackTop (Stack *stack, stack_t *top_element)
 
 //---------------------------------------------------------------------------------------
 
-StackError stackPop (Stack *stack)
+StackError stack_pop (Stack *stack)
 {
   if (stack == nullptr) {
     return StackError::structPtrErr;
@@ -145,7 +145,7 @@ StackError stackPop (Stack *stack)
 
   if (stack->size <= (stack->capacity / REALLOC_COEFF / REALLOC_COEFF) ) {
     if (stack->size != 0) {
-      stackResize (stack, stack->capacity / REALLOC_COEFF);
+      stack_resize (stack, stack->capacity / REALLOC_COEFF);
     }
     if (stack->size < 0) {
       printf ("WRONG STACK SIZE");
@@ -157,7 +157,7 @@ StackError stackPop (Stack *stack)
 
 //---------------------------------------------------------------------------------------
 
-StackError stackDtor(Stack *stack)
+StackError stack_dtor(Stack *stack)
 {
   if (stack == nullptr) {
     printf ("fatal error: BAD STACK PTR, please check entered parametres of function: %s\n", __func__);

@@ -16,8 +16,8 @@
 /**
  * TXLibushka: with voice!
  */
-// #define TX_USE_SPEAK
-// #include "C:\MinGW\TX\TXLib.h"
+#define TX_USE_SPEAK
+#include "C:\MinGW\TX\TXLib.h"
 
 //--------------------------------------------------------------------
 #include <stdlib.h>
@@ -33,8 +33,8 @@
 
 static void introduction ()
 {
-	// txSpeak ("vas privetstvuit inostranni pragramma Akinator! ",
-	//          "Smotrite!");
+	txSpeak ("vas privetstvuit inostranni pragramma Akinator! ",
+	         "Smotrite!");
 
 	printf ("(Chose mode)\n\n");
 	printf ("================\n");
@@ -48,9 +48,9 @@ static void introduction ()
 	printf ("[Q] Quit\n");
 	printf ("=========================\n\n");
 
-	// txSpeak ("Akinator mozet otgadat to chto ti dumal, risovat ",
-	//          "graf,  sravnit, sozdat derevo, nahodit cho-to");
-	// txSpeak ("esli Akinator vas uze dostal wi mozete vibrat Kwit");
+	txSpeak ("Akinator mozet otgadat to chto ti dumal, risovat ",
+	         "graf,  sravnit, sozdat derevo, nahodit cho-to");
+	txSpeak ("esli Akinator vas uze dostal wi mozete vibrat Kwit");
 
 	return;
 }
@@ -62,7 +62,12 @@ void select_mode (Tree* tree)
 	assert (tree != nullptr);
 
 	NamesLvl levels = {};
-	find_lvls (STD_LVL_DIR, &levels);
+
+	if (find_lvls (STD_LVL_DIR, &levels) == 0) {
+		printf ("ERROR! NO AKI LEVELS IN FOLDER\n");
+
+		return;
+	}
 
 	introduction ();
 
@@ -84,7 +89,7 @@ void select_mode (Tree* tree)
 				create_graph (tree, 0);
 
 				Stack stack = {};
-				stackCtor (&stack, 16);
+				stack_ctor (&stack, 16);
 				load_game (tree, &stack);
 
 				break;
@@ -155,7 +160,7 @@ void description_mode (NamesLvl *levels, Tree *tree)
 	search_data[strlen (search_data) - 1] = '\0';
 
 	Stack stack = {};
-	stackCtor (&stack, 16);
+	stack_ctor (&stack, 16);
 
 	Node *search_node = nullptr;
 	search_object (tree->cur_node, search_data, &stack, &search_node);
@@ -163,7 +168,7 @@ void description_mode (NamesLvl *levels, Tree *tree)
 	printf ("\n____[ Desctiption ]___________\n");
 	print_path (&stack, search_node);
 
-	stackDtor (&stack);
+	stack_dtor (&stack);
 
 	return;
 }
@@ -174,7 +179,7 @@ void search_object (Node *node, char *data, Stack *stack, Node **saving_node)
 {
 	assert (saving_node != nullptr);
 	assert (node        != nullptr);
-	assert (data 			  != nullptr);
+	assert (data 		!= nullptr);
 	assert (stack       != nullptr);
 
 	if (node->left->is_endian != 1) {
@@ -183,7 +188,7 @@ void search_object (Node *node, char *data, Stack *stack, Node **saving_node)
 	else if (strcmp (node->left->data, data) == 0) {
 		node->left->is_active = 1;
 
-		stackPush (stack, node->left);
+		stack_push (stack, node->left);
 		*saving_node = node->left;
 
 		return;
@@ -195,7 +200,7 @@ void search_object (Node *node, char *data, Stack *stack, Node **saving_node)
 	else if (strcmp (node->right->data, data) == 0) {
 		node->right->is_active = 1;
 
-		stackPush (stack, node->right);
+		stack_push (stack, node->right);
 		*saving_node = node->right;
 
 		return;
@@ -217,18 +222,18 @@ void print_path (Stack *stack, Node *search_node)
 	}
 
 	while (search_node->parent != nullptr) {
-		stackPush (stack, search_node->parent);
+		stack_push (stack, search_node->parent);
 
 		search_node = search_node->parent;
 	}
 
 	Node *print_node  = nullptr;
 	Node *print_node2 = nullptr;
-	stackTop (stack, &print_node);
-	stackPop (stack);
+	stack_top (stack, &print_node);
+	stack_pop (stack);
 
 	while (stack->size > 0) {
-		stackTop (stack, &print_node2);
+		stack_top (stack, &print_node2);
 		if ( strcmp (print_node->right->data, print_node2->data) == 0) {
 			printf ("Ne %s ", print_node->data);
 		}
@@ -238,8 +243,10 @@ void print_path (Stack *stack, Node *search_node)
 
 		print_node = print_node2;
 
-		stackPop (stack);
+		stack_pop (stack);
 	}
+
+	printf ("\n");
 }
 
 //--------------------------------------------------------------------
@@ -260,7 +267,7 @@ void compare_mode (Tree *tree, NamesLvl *levels)
 	search_data[strlen (search_data) - 1] = '\0';
 
 	Stack stack = {};
-	stackCtor (&stack, 16);
+	stack_ctor (&stack, 16);
 	Node *search_node = nullptr;
 	search_object (tree->cur_node, search_data, &stack, &search_node);
 
@@ -270,7 +277,7 @@ void compare_mode (Tree *tree, NamesLvl *levels)
 	search_data[strlen (search_data) - 1] = '\0';
 
 	Stack stack2 = {};
-	stackCtor (&stack2, 16);
+	stack_ctor (&stack2, 16);
 	Node *search_node2 = nullptr;
 	search_object (tree->cur_node, search_data, &stack2, &search_node2);
 
@@ -286,8 +293,10 @@ void compare_mode (Tree *tree, NamesLvl *levels)
 
 void push_nodes_in_stack (Node *node, Stack *stack)
 {
+
+
 	while (node->parent != nullptr) {
-		stackPush (stack, node->parent);
+		stack_push (stack, node->parent);
 
 		node = node->parent;
 	}
@@ -303,16 +312,16 @@ void skip_own_nodes
 	assert (stack1 != nullptr);
 	assert (stack2 != nullptr);
 
-	stackTop (stack1, print_node11);
-	stackPop (stack1);
-	stackTop (stack2, print_node21);
-	stackPop (stack2);
+	stack_top (stack1, print_node11);
+	stack_pop (stack1);
+	stack_top (stack2, print_node21);
+	stack_pop (stack2);
 
 	while (strcmp ((*print_node11)->data, (*print_node21)->data) == 0) {
-		stackTop (stack1, print_node11);
-		stackPop (stack1);
-		stackTop (stack2, print_node21);
-		stackPop (stack2);
+		stack_top (stack1, print_node11);
+		stack_pop (stack1);
+		stack_top (stack2, print_node21);
+		stack_pop (stack2);
 	}
 
 	printf ("\ndif. start at node with data: %s\n",
@@ -331,7 +340,7 @@ void print_own_nodes (Stack *stack1, Stack *stack2,
 	assert (stack2       != nullptr);
 
 	while (stack1->size > 0 && stack2->size > 0) {
-		stackTop (stack1, &print_node12);
+		stack_top (stack1, &print_node12);
 
 		if (strcmp (print_node11->right->data, print_node12->data) == 0) {
 			printf ("1] ne %-20s ", print_node11->data);
@@ -342,7 +351,7 @@ void print_own_nodes (Stack *stack1, Stack *stack2,
 
 		print_node11 = print_node12;
 
-		stackTop (stack2, &print_node22);
+		stack_top (stack2, &print_node22);
 		if (strcmp (print_node21->right->data, print_node22->data) == 0) {
 			printf ("2] ne %-20s\n", print_node21->data);
 		}
@@ -352,8 +361,8 @@ void print_own_nodes (Stack *stack1, Stack *stack2,
 
 		print_node21 = print_node22;
 
-		stackPop (stack1);
-		stackPop (stack2);
+		stack_pop (stack1);
+		stack_pop (stack2);
 	}
 
 	return;
@@ -369,7 +378,7 @@ void print_last_nodes (Stack *stack, Node *node1, Node *node2, int index)
 	char special_insert[] = "\t\t\t   ";
 
 	while (stack->size > 0) {
-		stackTop (stack, &node2);
+		stack_top (stack, &node2);
 		if ( strcmp (node1->right->data, node2->data) == 0) {
 			if (index == 2) {
 				printf ("%s%d] ne %-20s\n", special_insert, index, node1->data);
@@ -389,7 +398,7 @@ void print_last_nodes (Stack *stack, Node *node1, Node *node2, int index)
 
 		node1 = node2;
 
-		stackPop (stack);
+		stack_pop (stack);
 	}
 
 	return;
@@ -1007,7 +1016,7 @@ void answer_aki_question (Tree *tree, Stack *stack,
 {
 	while (tree->cur_node->is_endian != true || stack->size != 0) {
 		
-		printf ("\vAkinator interesovatsa... ito %20s? [Y/N/IDN] ",
+		txSpeak ("\vAkinator interesovatsa... ito %20s? [Y/N/IDN] ",
 						tree->cur_node->data);
 
 		char answ[4] = {};
@@ -1023,8 +1032,8 @@ void answer_aki_question (Tree *tree, Stack *stack,
 				break;
 			}
 			else if (answ[0] == 'N') {
-				stackTop (stack, &tree->cur_node);
-				stackPop (stack);
+				stack_top (stack, &tree->cur_node);
+				stack_pop (stack);
 				
 				tree->cur_node = tree->cur_node->right;
 				
@@ -1037,7 +1046,7 @@ void answer_aki_question (Tree *tree, Stack *stack,
 		fgets (answ, 4, stdin);
 
 		if (answ[0] == 'I') {
-			stackPush (stack, tree->cur_node);
+			stack_push (stack, tree->cur_node);
 			tree->cur_node = tree->cur_node->left;
 
 			continue;
@@ -1064,7 +1073,7 @@ void BAD_END (Tree *tree)
 {
 	assert (tree != nullptr);
 
-	printf ("\vleeeeeee, togda akinator ne znat, ikarni babai a chto ti zagadival?\n");
+	txSpeak ("\vleeeeeee, togda akinator ne znat, ikarni babai a chto ti zagadival?\n");
 	expand_tree (tree, 'l');
 
 	tree->cur_node = tree->root;
@@ -1085,16 +1094,16 @@ void happy_end (Tree *tree)
 
 	printf ("\n=============================\n");
 
-	printf ("\vleeeeeeee opyat pobedil! azazazazazaz. bylo neslozno)!\n");
-	printf ("\vza takov prekrasni pobeda wi platit akinatoru sto rublei\n");
+	txSpeak ("\vleeeeeeee opyat pobedil! azazazazazaz. bylo neslozno)!\n");
+	txSpeak ("\vza takov prekrasni pobeda wi platit akinatoru sto rublei\n");
 	printf ("zaplatit ");
 	int sallary = 0;
 	scanf ("%d", &sallary);
 	if (sallary >= 100) {
-		printf ("Akinator dovooolen, prihodite escho!");
+		txSpeak ("Akinator dovooolen, prihodite escho!");
 	}
 	else {
-		printf ("Leeee nu kak tak, togda ya s vami ne igrau");
+		txSpeak ("Leeee nu kak tak, togda ya s vami ne igrau");
 
 		printf ("[ Akinator obidelsa ]\n");
 	}
@@ -1116,7 +1125,7 @@ void load_game (Tree *tree, Stack *stack)
 
 	if (answer_with_assumption_correct == false) {
 		printf ("------------------------------------\n");
-		printf ("\vAkinator dumat, chto ito %20s? [Y/N] ", tree->cur_node->data);
+		txSpeak ("\vAkinator dumat, chto ito %20s? [Y/N] ", tree->cur_node->data);
 	}
 	
 	if (answer_with_assumption_correct || get_ans ()) {
@@ -1182,3 +1191,12 @@ void print_node (Node *node, FILE *file)
 }
 
 //-------- End of .cpp file! -----------------------------------------
+
+/*
+void dtor ()
+{
+
+
+	return;
+}
+*/

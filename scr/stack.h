@@ -38,7 +38,7 @@ typedef  struct {
  * @param new_stack stack example 
  * @param start_capacity start max number of elements in stack
  */
-StackError stackCtor (Stack *new_stack, unsigned int start_capacity);
+StackError stack_ctor (Stack *new_stack, unsigned int start_capacity);
 
 /**
  * @brief changes capacity of stack
@@ -46,7 +46,7 @@ StackError stackCtor (Stack *new_stack, unsigned int start_capacity);
  * @param new_stack stack example 
  * @param increase_by in what capacity we change current capacity of stack
  */
-StackError stackResize (Stack *stack, size_t increase_by);
+StackError stack_resize (Stack *stack, size_t increase_by);
 
 /**
  * @brief changes capacity of stack
@@ -54,27 +54,27 @@ StackError stackResize (Stack *stack, size_t increase_by);
  * @param new_stack stack example 
  * @param increase_by in what capacity we change current capacity of stack
  */
-StackError stackPush (Stack *stack, stack_t value);
+StackError stack_push (Stack *stack, stack_t value);
 
 /**
  * @brief returns last element in stack
  * 
  * @param new_stack stack example 
  */
-StackError stackTop (Stack *stack, stack_t *top_element);
+StackError stack_top (Stack *stack, stack_t *top_element);
 
 /**
  * @brief delete last element
  * 
  * @param new_stack stack example 
  */
-StackError stackPop (Stack *stack);
+StackError stack_pop (Stack *stack);
 
 /**
  * @brief delete stack example
  * 
  * @param new_stack stack example 
  */
-StackError stackDtor (Stack *stack);
+StackError stack_dtor (Stack *stack);
 
 #endif //STACK_2_STACK_H
