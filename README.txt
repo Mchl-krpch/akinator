@@ -2,7 +2,7 @@
      Akinator description [6th project]
    -----------------------------------------------
 
-🚧 A simple clone game of the famous game akinator on the Internet [https://ru.akinator.com/]. Can guess your character from
+A simple clone game of the famous game akinator on the Internet [https://ru.akinator.com/]. Can guess your character from
 your Yes / No answers. The game has an uncomplicated lore and even its own character! You can take a look at your leisure.
 The program was written as part of the Dedinsky course.
 
